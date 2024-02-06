@@ -1,0 +1,8 @@
+
+<resources>
+    <attr name="colorCustomColfirstor1" format="color" />
+    <attr name="colorOnCustomColfirstor1" format="color" />
+    <attr name="colorCustomColfirstor1Container" format="color" />
+    <attr name="colorOnCustomColfirstor1Container" format="color" />
+    <attr name="harmonizeCustomColfirstor1" format="boolean" />
+</resources>
