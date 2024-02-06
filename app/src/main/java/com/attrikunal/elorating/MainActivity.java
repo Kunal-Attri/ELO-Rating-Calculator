@@ -1,15 +1,21 @@
 package com.attrikunal.elorating;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager2.widget.ViewPager2;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.attrikunal.elorating.adapters.MyPagerAdapter;
+import com.attrikunal.elorating.fragments.OutcomeFragment;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.color.DynamicColors;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -17,9 +23,10 @@ public class MainActivity extends AppCompatActivity {
 
     private TextInputEditText player1RatingText, player2RatingText;
     private MaterialTextView newRatings;
-    private ChipGroup outcomeGroup;
     private Button updateBtn;
     private ELO elo;
+    private TabLayout tabsGroup;
+    private ViewPager2 viewPager2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +36,44 @@ public class MainActivity extends AppCompatActivity {
         player1RatingText = findViewById(R.id.player1rating);
         player2RatingText = findViewById(R.id.player2rating);
         newRatings = findViewById(R.id.newratings);
-        outcomeGroup = findViewById(R.id.chipgroup);
         updateBtn = findViewById(R.id.updateButton);
+        tabsGroup = findViewById(R.id.tabsGroup);
+        viewPager2 = findViewById(R.id.viewPager);
+
+        FragmentManager manager = getSupportFragmentManager();
+        MyPagerAdapter adapter = new MyPagerAdapter(manager, getLifecycle());
+        viewPager2.setAdapter(adapter);
+
+        tabsGroup.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tabsGroup.selectTab(tabsGroup.getTabAt(position));
+            }
+        });
 
         elo = new ELO();
 
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int player1Rating = 1500, player2Rating = 1500, outcome;
+                int player1Rating = 1500, player2Rating = 1500, outcome = 0;
                 boolean process = true;
 
                 Editable p1text = player1RatingText.getText();
@@ -66,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     process = false;
                 }
 
-                int selectedChip = outcomeGroup.getCheckedChipId();
+                int selectedChip = OutcomeFragment.getSelectedChip();
                 if (selectedChip == -1) {
                     Toast.makeText(MainActivity.this,
                             "Outcome required",
@@ -93,5 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 }
